@@ -7,7 +7,6 @@ import {
   ListItemIcon,
   ListItemText,
   makeStyles,
-  useTheme,
 } from '@material-ui/core';
 import React from 'react';
 import { useState } from 'react';
@@ -96,6 +95,7 @@ export const SideBar = (): JSX.Element => {
           paper: classes.drawerPaper,
         }}>
         <div className={classes.drawerHeader}>
+          ロゴ
           <IconButton onClick={handleDrawerClose}>
             <ChevronLeftIcon />
           </IconButton>
