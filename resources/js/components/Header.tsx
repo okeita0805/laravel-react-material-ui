@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import MenuIcon from '@material-ui/icons/Menu';
+import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Header = (): JSX.Element => {
-  const classes = useStyles();
+  const classes: ClassNameMap<'root' | 'menuButton' | 'title'> = useStyles();
 
   return (
     <AppBar position="static">
