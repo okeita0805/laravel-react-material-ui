@@ -4,7 +4,7 @@ import Top from "../page/Top";
 
 export default function Index() {
   return (
-    <Layout>
+    <Layout title={"注文状況"}>
       <Top />
     </Layout>
   );

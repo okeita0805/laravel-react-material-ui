@@ -87,6 +87,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type Props = {
   children?: React.ReactNode;
+  title: string;
 };
 
 export default function Layout(props: Props) {
@@ -119,7 +120,7 @@ export default function Layout(props: Props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            店名
+            {props.title}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -147,7 +148,7 @@ export default function Layout(props: Props) {
               <ListItemText primary="注文状況" />
             </ListItem>
           </Link>
-          <Link to={"/"}>
+          <Link to={"/sold_out"}>
             <ListItem button>
               <ListItemIcon>
                 <RestaurantIcon />
@@ -163,7 +164,7 @@ export default function Layout(props: Props) {
               <ListItemText primary="売上管理" />
             </ListItem>
           </Link>
-          <Link to={"/"}>
+          <Link to={"/business_hours"}>
             <ListItem button>
               <ListItemIcon>
                 <QueryBuilderIcon />
@@ -171,7 +172,7 @@ export default function Layout(props: Props) {
               <ListItemText primary="営業時間設定" />
             </ListItem>
           </Link>
-          <Link to={"/"}>
+          <Link to={"/holidays"}>
             <ListItem button>
               <ListItemIcon>
                 <Brightness2Icon />
@@ -179,7 +180,7 @@ export default function Layout(props: Props) {
               <ListItemText primary="休業日設定" />
             </ListItem>
           </Link>
-          <Link to={"/"}>
+          <Link to={"/order_stop"}>
             <ListItem button>
               <ListItemIcon>
                 <PauseCircleFilledIcon />
@@ -187,7 +188,7 @@ export default function Layout(props: Props) {
               <ListItemText primary="注文受け付け停止" />
             </ListItem>
           </Link>
-          <Link to={"/"}>
+          <Link to={"/updates"}>
             <ListItem button>
               <ListItemIcon>
                 <InfoIcon />
@@ -195,7 +196,7 @@ export default function Layout(props: Props) {
               <ListItemText primary="お知らせ更新情報" />
             </ListItem>
           </Link>
-          <Link to={"/"}>
+          <Link to={"/settings"}>
             <ListItem button>
               <ListItemIcon>
                 <SettingsIcon />
