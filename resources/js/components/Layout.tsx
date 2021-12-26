@@ -90,7 +90,7 @@ type Props = {
   title: string;
 };
 
-export default function Layout(props: Props) {
+export default function Layout({ title, children }: Props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
 
@@ -120,7 +120,7 @@ export default function Layout(props: Props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            {props.title}
+            {title}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -211,7 +211,7 @@ export default function Layout(props: Props) {
           [classes.contentShift]: open,
         })}>
         <div className={classes.drawerHeader} />
-        {props.children}
+        {children}
       </main>
     </div>
   );
