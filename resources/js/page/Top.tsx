@@ -26,7 +26,7 @@ const LeftButton = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
   boxShadow: "none",
   width: "100%",
-  height: "100px",
+  height: "150px",
 }));
 
 export default function Top() {
