@@ -1,9 +1,9 @@
-@extends('layouts.app') @section('content')
+@extends('layouts.auth') @section('content')
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">{{ __('Register') }}</div>
+        <div class="card-header">{{ __('アカウント登録') }}</div>
 
         <div class="card-body">
           <form method="POST" action="{{ route('register') }}">
@@ -11,7 +11,7 @@
 
             <div class="form-group row">
               <label for="name" class="col-md-4 col-form-label text-md-right">{{
-                __('Name')
+                __('氏名')
               }}</label>
 
               <div class="col-md-6">
@@ -38,7 +38,7 @@
               <label
                 for="email"
                 class="col-md-4 col-form-label text-md-right"
-                >{{ __('E-Mail Address') }}</label
+                >{{ __('メールアドレス') }}</label
               >
 
               <div class="col-md-6">
@@ -64,7 +64,7 @@
               <label
                 for="password"
                 class="col-md-4 col-form-label text-md-right"
-                >{{ __('Password') }}</label
+                >{{ __('パスワード') }}</label
               >
 
               <div class="col-md-6">
@@ -89,7 +89,7 @@
               <label
                 for="password-confirm"
                 class="col-md-4 col-form-label text-md-right"
-                >{{ __('Confirm Password') }}</label
+                >{{ __('確認用パスワード') }}</label
               >
 
               <div class="col-md-6">
