@@ -19,4 +19,7 @@ Route::group([
  ], function () {
     Route::get('/brands','BrandController@index');
     Route::put('/brands','BrandController@update');
+
+    // 店舗情報を1件取得
+    Route::get('/shops','ShopController@index');
 });

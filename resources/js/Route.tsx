@@ -8,7 +8,6 @@ import OrderStop from "./entry/OrderStop";
 import Sale from "./entry/Sale";
 import Setting from "./entry/Setting";
 import SoldOut from "./entry/SoldOut";
-import Update from "./entry/Update";
 
 export default function App() {
   return (
@@ -37,10 +36,6 @@ export default function App() {
         {/* 注文受け付け停止 */}
         <Route exact path="/order_stop">
           <OrderStop />
-        </Route>
-        {/* お知らせ更新情報 */}
-        <Route exact path="/updates">
-          <Update />
         </Route>
         {/* 設定 */}
         <Route exact path="/settings">
