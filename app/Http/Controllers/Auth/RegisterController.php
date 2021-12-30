@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
@@ -93,10 +94,10 @@ class RegisterController extends Controller
      */
     protected function create(array $data): User
     {
-        return User::create([
+        return User::query()->create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'email_verified_at' => $data['email'],
+            'email_verified_at' => Carbon::now(),
             'password' => Hash::make($data['password']),
         ]);
     }
