@@ -22,4 +22,8 @@ Route::group([
 
     // 店舗情報を1件取得
     Route::get('/shops','ShopController@index');
+
+    // プリンター情報を1件取得
+    Route::get('/printers','PrinterController@index');
+    Route::put('/printers','PrinterController@update');
 });

@@ -1,7 +1,9 @@
 import { Button, createStyles, Grid, makeStyles } from "@material-ui/core";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
+import { Printer } from "../api/printer";
 import { Shop } from "../api/shop";
 import { Information } from "../components/Setting/Information";
+import { Printer as PrinterPage } from "../components/Setting/Printer";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -13,10 +15,12 @@ const useStyles = makeStyles(() =>
 
 export const Setting: React.FC<{
   shop: Shop;
-}> = ({ shop }) => {
+  printer: Printer;
+  setPrinter: Dispatch<SetStateAction<Printer>>;
+}> = ({ shop, printer, setPrinter }) => {
   const classes = useStyles();
 
-  const [isFirstTab, setIsFirstTab] = React.useState<boolean>(true);
+  const [isFirstTab, setIsFirstTab] = React.useState<boolean>(false);
 
   return (
     <Grid container spacing={2}>
@@ -41,7 +45,11 @@ export const Setting: React.FC<{
         </Grid>
       </Grid>
       <Grid container item xs={12}>
-        {isFirstTab ? <Information shop={shop} /> : null}
+        {isFirstTab ? (
+          <Information shop={shop} />
+        ) : (
+          <PrinterPage printer={printer} setPrinter={setPrinter} />
+        )}
       </Grid>
     </Grid>
   );
