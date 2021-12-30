@@ -20,7 +20,7 @@ export const Setting: React.FC<{
 }> = ({ shop, printer, setPrinter }) => {
   const classes = useStyles();
 
-  const [isFirstTab, setIsFirstTab] = React.useState<boolean>(false);
+  const [isFirstTab, setIsFirstTab] = React.useState<boolean>(true);
 
   return (
     <Grid container spacing={2}>

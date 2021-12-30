@@ -1,29 +1,19 @@
 import * as React from "react";
-import { Button, Grid, Paper, styled, Typography } from "@material-ui/core";
+import { Button, Grid, Typography } from "@material-ui/core";
 import {
   Printer as PrinterType,
   putPrinter,
   Quantity,
   ReceiptWidth,
 } from "../../api/printer";
-
-const Item = styled(Paper)(({ theme }) => ({
-  ...theme.typography.body2,
-  padding: theme.spacing(4),
-  marginTop: theme.spacing(2),
-  textAlign: "left",
-  fontSize: "large",
-  color: theme.palette.text.secondary,
-  "&.selected": {
-    color: "white",
-    backgroundColor: "black",
-  },
-}));
+import { useSnackbar } from "notistack";
 
 export const Printer: React.FC<{
   printer: PrinterType;
   setPrinter: React.Dispatch<React.SetStateAction<PrinterType>>;
 }> = ({ printer, setPrinter }) => {
+  const { enqueueSnackbar } = useSnackbar();
+
   const handlerClickReceiptWidth = (receiptWidth: ReceiptWidth) => {
     setPrinter({
       ...printer,
@@ -39,7 +29,9 @@ export const Printer: React.FC<{
   };
 
   const handlerClickSave = () => {
-    putPrinter(printer);
+    putPrinter(printer).then(() => {
+      enqueueSnackbar("保存しました", { variant: "success" });
+    });
   };
 
   return (
@@ -115,11 +107,6 @@ export const Printer: React.FC<{
           color="primary">
           保存
         </Button>
-      </Grid>
-      <Grid item xs={12} style={{ marginTop: "36px" }}>
-        <Typography variant="h6" component="h2">
-          プリンター接続マニュアルはこちら
-        </Typography>
       </Grid>
     </Grid>
   );

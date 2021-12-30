@@ -3,6 +3,7 @@ import { getPrinter, Printer } from "../api/printer";
 import { getShop, Shop } from "../api/shop";
 import Layout from "../components/Layout";
 import { Setting as SettingPage } from "../page/Setting";
+import { SnackbarProvider } from "notistack";
 
 export default function Setting() {
   const [shop, setShop] = React.useState<Shop>({
@@ -30,8 +31,12 @@ export default function Setting() {
   }, [setPrinter]);
 
   return (
-    <Layout title={"設定"}>
-      <SettingPage shop={shop} printer={printer} setPrinter={setPrinter} />
-    </Layout>
+    <SnackbarProvider
+      maxSnack={5}
+      anchorOrigin={{ horizontal: "right", vertical: "top" }}>
+      <Layout title={"設定"}>
+        <SettingPage shop={shop} printer={printer} setPrinter={setPrinter} />
+      </Layout>
+    </SnackbarProvider>
   );
 }
