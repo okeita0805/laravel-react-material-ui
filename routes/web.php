@@ -16,6 +16,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {
         return view('index');
     })->where('any', '.*');
+
+    Route::get('/order_stop', function () {
+        return view('index');
+    })->where('any', '.*');
 });
 
 Auth::routes();
