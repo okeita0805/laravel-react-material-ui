@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Brands, getBrands } from "../api/brands";
+import { Brands, getBrands } from "../api/brand";
 import Layout from "../components/Layout";
 import { OrderStop as OrderStopPage } from "../page/OrderStop";
 

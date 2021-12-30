@@ -188,14 +188,6 @@ export default function Layout({ title, children }: Props) {
               <ListItemText primary="注文受け付け停止" />
             </ListItem>
           </Link>
-          <Link to={"/updates"}>
-            <ListItem button>
-              <ListItemIcon>
-                <InfoIcon />
-              </ListItemIcon>
-              <ListItemText primary="お知らせ更新情報" />
-            </ListItem>
-          </Link>
           <Link to={"/settings"}>
             <ListItem button>
               <ListItemIcon>

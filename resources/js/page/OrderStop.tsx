@@ -7,9 +7,7 @@ import {
   styled,
 } from "@material-ui/core";
 import React, { Dispatch, SetStateAction } from "react";
-import { Brand, Brands, putBrand } from "../api/brands";
-
-type Service = "UberEats" | "foodpanda" | "didi";
+import { Brand, Brands, putBrand } from "../api/brand";
 
 const useStyles = makeStyles(() =>
   createStyles({

@@ -13,13 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', function () {
-        return view('index');
-    })->where('any', '.*');
 
-    Route::get('/order_stop', function () {
-        return view('index');
-    })->where('any', '.*');
+    $paths = ['/', '/order_stop', '/sales', '/sold_out', '/business_hours', '/holidays', '/settings'];
+    foreach ($paths as $path) {
+        Route::get($path, function () {
+            return view('index');
+        })->where('any', '.*');
+    }
 });
 
 Auth::routes();
