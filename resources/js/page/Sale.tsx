@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { Grid, Paper, styled } from "@material-ui/core";
+import { Button, Grid, Paper, styled } from "@material-ui/core";
 import SaleHistoryTable from "../components/Sale/Table";
 import SaleCalculate from "../components/Sale/Calculate";
 
@@ -27,10 +27,22 @@ export default function Top() {
   return (
     <Grid container spacing={2}>
       <Grid item xs={6}>
-        <Item onClick={() => setIsHistory(true)}>注文履歴</Item>
+        <Button
+          style={{ width: "100%" }}
+          variant="contained"
+          color={isHistory ? "primary" : "inherit"}
+          onClick={() => setIsHistory(true)}>
+          注文履歴
+        </Button>
       </Grid>
       <Grid item xs={6}>
-        <Item onClick={() => setIsHistory(false)}>売上修正</Item>
+        <Button
+          style={{ width: "100%" }}
+          variant="contained"
+          color={isHistory ? "inherit" : "primary"}
+          onClick={() => setIsHistory(false)}>
+          売上修正
+        </Button>
       </Grid>
       <Grid item xs={12}>
         {isHistory ? <SaleHistoryTable /> : <SaleCalculate />}
