@@ -41,7 +41,7 @@ class OrderHistoryController extends Controller
     public function show(int $id): JsonResponse
     {
         $shop_id = Auth::user()->shop_id;
-        $order = Order::query()->with('details')->where('shop_id', $shop_id)->where('id', $id)->first();
+        $order = Order::query()->with('details')->with('details.modifiers')->where('shop_id', $shop_id)->where('id', $id)->first();
         if (is_null($order)) {
             return response()->json([], 404);
         }
@@ -63,7 +63,10 @@ class OrderHistoryController extends Controller
                         'deliveredAt' => $order->delivered_at,
                         'isDisposable' => $order->is_disposable,
                         'deliveryNumber' => $order_with_service->delivery_number,
-                        'order' => $order->comment,
+                        'comment' => $order->comment,
+                        'total' => $order->total,
+                        'fee' => $order->fee,
+                        'details' => $order->details,
                     ],
                 ],
                 200

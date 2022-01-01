@@ -24,6 +24,17 @@ export type OrderHistoryDetail = {
   isDisposable: boolean;
   deliveryNumber: number;
   comment: string;
+  total: number;
+  fee: number;
+  details: Detail[];
+};
+
+export type Detail = {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  modifiers: Detail[];
 };
 
 export type OrderHistories = OrderHistory[];
@@ -42,6 +53,9 @@ export const getInitialOrderHistoryDetail = (): OrderHistoryDetail => {
     isDisposable: true,
     deliveryNumber: 0,
     comment: "",
+    total: 0,
+    fee: 0,
+    details: [],
   };
 };
 

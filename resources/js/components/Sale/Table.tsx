@@ -21,6 +21,7 @@ import {
   WithStyles,
 } from "@material-ui/core";
 import {
+  Detail,
   getInitialOrderHistoryDetail,
   getOrderHistories,
   getOrderHistoryById,
@@ -31,6 +32,7 @@ import {
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
+import { ConvertToStrng } from "../../utils/price";
 
 const useStyles = makeStyles({
   table: {
@@ -238,17 +240,144 @@ export default function SaleHistoryTable() {
               </Grid>
             </Grid>
           </Grid>
-          注文一覧
-          <Divider />
-          <Divider />
+          <Typography variant="h6">注文一覧</Typography>
+          <Divider style={{ margin: "12px 0" }} />
+          {orderHistory.details.map((detail: Detail) => {
+            return (
+              <div key={detail.id}>
+                <Grid container>
+                  <Grid item xs={6}>
+                    <Typography variant="h5">
+                      {detail.name} x {detail.quantity}
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={6}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      flexDirection: "row-reverse",
+                      fontSize: "22px",
+                    }}>
+                    {ConvertToStrng(detail.price)}
+                  </Grid>
+                  {detail.modifiers.map(
+                    (modifier: {
+                      id: number;
+                      name: string;
+                      price: number;
+                      quantity: number;
+                    }) => {
+                      return (
+                        <Grid
+                          container
+                          key={modifier.id}
+                          style={{ marginTop: "12px" }}>
+                          <Grid item xs={6}>
+                            <Typography variant="h6">
+                              + {modifier.name} x {modifier.quantity}
+                            </Typography>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={6}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              flexDirection: "row-reverse",
+                            }}>
+                            {ConvertToStrng(modifier.price)}
+                          </Grid>
+                        </Grid>
+                      );
+                    }
+                  )}
+                </Grid>
+                <Divider style={{ margin: "12px 0" }} />
+              </div>
+            );
+          })}
           <Grid container>
             <Grid item xs={6}>
-              注文に関するご要望:
+              <Grid item>注文に関するご要望:</Grid>
+              <Grid item style={{ marginTop: "12px" }}>
+                {orderHistory.comment}
+              </Grid>
             </Grid>
             <Grid item xs={6}>
-              <Grid item>小計 (内税)</Grid>
-              <Grid item>注文割引額</Grid>
-              <Grid item>合計支払額</Grid>
+              <Grid item>
+                <Grid container>
+                  <Grid
+                    item
+                    xs={9}
+                    style={{
+                      textAlign: "right",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                    }}>
+                    小計 (内税)
+                  </Grid>
+                  <Grid
+                    item
+                    xs={3}
+                    style={{
+                      textAlign: "right",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                    }}>
+                    {ConvertToStrng(orderHistory.total)}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item style={{ marginTop: "8px" }}>
+                <Grid container>
+                  <Grid
+                    item
+                    xs={9}
+                    style={{
+                      textAlign: "right",
+                      fontWeight: "bold",
+                      fontSize: "20px",
+                    }}>
+                    合計支払額
+                  </Grid>
+                  <Grid
+                    item
+                    xs={3}
+                    style={{
+                      textAlign: "right",
+                      fontWeight: "bold",
+                      fontSize: "20px",
+                    }}>
+                    {ConvertToStrng(orderHistory.total)}
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item style={{ marginTop: "8px" }}>
+                <Grid container>
+                  <Grid
+                    item
+                    xs={9}
+                    style={{
+                      textAlign: "right",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                    }}>
+                    その他手数料
+                  </Grid>
+                  <Grid
+                    item
+                    xs={3}
+                    style={{
+                      textAlign: "right",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                    }}>
+                    {ConvertToStrng(orderHistory.fee)}
+                  </Grid>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </DialogContent>
