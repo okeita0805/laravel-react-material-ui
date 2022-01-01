@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
 {
+    /**
+     * @return JsonResponse
+     */
     public function index(): JsonResponse
     {
         $shop_id = Auth::user()->shop_id;

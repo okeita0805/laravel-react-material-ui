@@ -26,4 +26,7 @@ Route::group([
     // プリンター情報を1件取得
     Route::get('/printers','PrinterController@index');
     Route::put('/printers','PrinterController@update');
+
+    Route::get('/order_histories','OrderHistoryController@index');
+    Route::get('/order_histories/{id}','OrderHistoryController@show');
 });

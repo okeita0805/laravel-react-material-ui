@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 class PrinterController extends Controller
 {
+    /**
+     * @return JsonResponse
+     */
     public function index(): JsonResponse
     {
         $shop_id = Auth::user()->shop_id;
@@ -26,6 +29,10 @@ class PrinterController extends Controller
         );
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function update(Request $request): JsonResponse
     {
         $shop_id = Auth::user()->shop_id;
