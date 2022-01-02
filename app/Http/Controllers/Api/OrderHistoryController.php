@@ -56,7 +56,7 @@ class OrderHistoryController extends Controller
                         'expeditionType' => $order->expedition_type,
                         'serviceType' => $order->service_type,
                         'name' => $order->name,
-                        'address' => 'addressを後で入れる',
+                        'address' => $order->address,
                         'phone' => $order->phone,
                         'paymentMethod' => $order_with_service->payment_method,
                         'orderedAt' => $order->ordered_at,
