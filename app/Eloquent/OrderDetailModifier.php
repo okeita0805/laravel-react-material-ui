@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderDetailModifier extends Model
 {
+    protected $guarded = [];
+
     public function detail(): BelongsTo
     {
         return $this->belongsTo(orderDetail::class);

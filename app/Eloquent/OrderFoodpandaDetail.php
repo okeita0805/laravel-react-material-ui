@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderFoodpandaDetail extends Model
 {
+    protected $guarded = [];
+
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);

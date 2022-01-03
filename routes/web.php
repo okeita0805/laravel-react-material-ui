@@ -22,10 +22,6 @@ Route::middleware(['auth'])->group(function () {
     }
 });
 
-Route::post('/webhook/foodpanada', function (\Illuminate\Http\Request $request) {
-    \Log::debug($request->all());
-    // TODO: store_id: 61cddf79e6250278735eef59に注文が届く
-    return response()->json([], 200);
-});
+Route::post('/webhook/foodpanada', 'Webhook\FoodpandaController');
 
 Auth::routes();

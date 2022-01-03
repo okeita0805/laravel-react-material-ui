@@ -27,6 +27,10 @@ Route::group([
     Route::get('/printers','PrinterController@index');
     Route::put('/printers','PrinterController@update');
 
+    // 売上管理
     Route::get('/order_histories','OrderHistoryController@index');
     Route::get('/order_histories/{id}','OrderHistoryController@show');
+
+    // 注文状況
+    Route::get('/orders','OrderController@index');
 });
