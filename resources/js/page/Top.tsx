@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import { Grid, Paper, styled } from "@material-ui/core";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import CakeIcon from "@material-ui/icons/Cake";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
+import { getOrders, Order, Orders } from "../api/order";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -20,6 +21,12 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
   boxShadow: "none",
   background: "none",
+  margin: "0 12px",
+}));
+
+const ItemOrder = styled(Item)(() => ({
+  background: "white",
+  marginTop: "12px",
 }));
 
 const LeftButton = styled(Paper)(({ theme }) => ({
@@ -42,7 +49,7 @@ const LeftPrimaryButton = styled(LeftButton)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
 }));
 
-const NewOrder = () => (
+const NewOrder = (): JSX.Element => (
   <Grid item>
     <Grid item xs={12}>
       <NotificationsNoneIcon style={{ fontSize: "72px" }} />
@@ -53,7 +60,7 @@ const NewOrder = () => (
   </Grid>
 );
 
-const CookingOrder = () => (
+const CookingOrder = (): JSX.Element => (
   <Grid item>
     <Grid item xs={12}>
       <CakeIcon style={{ fontSize: "72px" }} />
@@ -64,7 +71,7 @@ const CookingOrder = () => (
   </Grid>
 );
 
-const PreparedOrder = () => (
+const PreparedOrder = (): JSX.Element => (
   <Grid item>
     <Grid item xs={12}>
       <LocalMallIcon style={{ fontSize: "72px" }} />
@@ -76,11 +83,62 @@ const PreparedOrder = () => (
 );
 
 export default function Top() {
-  const classes = useStyles();
-
   type Status = "新規注文" | "調理中" | "準備完了";
 
   const [status, setStatus] = useState<Status>("新規注文");
+
+  const [orders, setOrders] = React.useState<Orders>([]);
+
+  useEffect(() => {
+    // ポーリング処理
+    const timer = setInterval(() => {
+      getOrders().then((orders: Orders) => {
+        setOrders(orders);
+      });
+    }, 4000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
+  const NewOrders = (): Orders =>
+    orders.filter((order: Order) => order.status === "新規注文");
+
+  const CookingOrders = (): Orders =>
+    orders.filter((order: Order) => order.status === "調理中");
+
+  const PreparedOrders = (): Orders =>
+    orders.filter((order: Order) => order.status === "準備完了");
+
+  const OrderList = (orders: Orders) => {
+    return (
+      <>
+        {orders.map((order: Order) => {
+          return (
+            <ItemOrder key={order.id}>
+              <Grid container>
+                <Grid item xs>
+                  {order.serviceType}
+                </Grid>
+                <Grid item xs>
+                  {order.orderNumber}
+                </Grid>
+                <Grid item xs>
+                  {order.brandName}
+                </Grid>
+                <Grid item xs>
+                  {order.expeditionType}
+                </Grid>
+                <Grid item xs>
+                  {order.deliveredAt}
+                </Grid>
+              </Grid>
+            </ItemOrder>
+          );
+        })}
+      </>
+    );
+  };
 
   const handlerStatus = (status: Status) => {
     setStatus(status);
@@ -91,20 +149,26 @@ export default function Top() {
       <Grid item xs={12}>
         <Grid container>
           <Grid item xs={2} />
-          <Grid item xs={2}>
-            <Item>サービス名</Item>
-          </Grid>
-          <Grid item xs={2}>
-            <Item>注文番号</Item>
-          </Grid>
-          <Grid item xs={2}>
-            <Item>店舗名</Item>
-          </Grid>
-          <Grid item xs={2}>
-            <Item>お渡し方法</Item>
-          </Grid>
-          <Grid item xs={2}>
-            <Item>受け渡し時間</Item>
+          <Grid item xs={10}>
+            <Item>
+              <Grid container>
+                <Grid item xs>
+                  サービス名
+                </Grid>
+                <Grid item xs>
+                  注文番号
+                </Grid>
+                <Grid item xs>
+                  店舗名
+                </Grid>
+                <Grid item xs>
+                  お渡し方法
+                </Grid>
+                <Grid item xs>
+                  受け渡し時間
+                </Grid>
+              </Grid>
+            </Item>
           </Grid>
         </Grid>
       </Grid>
@@ -139,7 +203,11 @@ export default function Top() {
               </LeftButton>
             )}
           </Grid>
-          <Grid item xs={10}></Grid>
+          <Grid item xs={10}>
+            {status === "新規注文" ? OrderList(NewOrders()) : null}
+            {status === "調理中" ? OrderList(CookingOrders()) : null}
+            {status === "準備完了" ? OrderList(PreparedOrders()) : null}
+          </Grid>
         </Grid>
       </Grid>
     </Grid>
