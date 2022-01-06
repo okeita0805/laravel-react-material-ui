@@ -32,21 +32,6 @@ const useStyles = makeStyles({
   },
 });
 
-const createData = (
-  id: number,
-  brandName: string,
-  serviceType: number,
-  orderNumber: number,
-  total: number
-) => {
-  return { id, brandName, serviceType, orderNumber, total };
-};
-
-const rows = [
-  createData(1, "Frozen yoghurt", 159, 6.0, 24),
-  createData(2, "Ice cream sandwich", 237, 9.0, 37),
-];
-
 const createData2 = (
   id: number,
   status: string,
@@ -63,9 +48,29 @@ const rows2 = [
 ];
 
 export default function SaleCalculate() {
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [search, setSearch] = useState<{
+    startDate: Date | null;
+    serviceType: ServiceType | "全て";
+    orderNumber: number | "-";
+    total: number | "-";
+  }>({
+    startDate: new Date(),
+    serviceType: "全て",
+    orderNumber: "-",
+    total: "-",
+  });
 
-  const [serviceType, setServiceType] = useState<ServiceType | "全て">("全て");
+  const [summary, setSummary] = useState<{
+    brandName: string;
+    serviceType: ServiceType | "全て";
+    orderNumber: number;
+    total: number;
+  }>({
+    brandName: "",
+    serviceType: "全て",
+    orderNumber: 0,
+    total: 0,
+  });
 
   const classes = useStyles();
 
@@ -87,12 +92,15 @@ export default function SaleCalculate() {
               <TextField
                 type="date"
                 onChange={(event) => {
-                  setStartDate(new Date(event.target.value));
+                  setSearch({
+                    ...search,
+                    startDate: new Date(event.target.value),
+                  });
                 }}
                 InputLabelProps={{
                   shrink: true,
                 }}
-                defaultValue={formatDate(startDate)}
+                defaultValue={formatDate(search.startDate)}
               />
             </Grid>
           </Grid>
@@ -118,9 +126,12 @@ export default function SaleCalculate() {
             <Grid container alignItems="center">
               <Select
                 style={{ width: "155px" }}
-                value={serviceType}
+                value={search.serviceType}
                 onChange={(event) => {
-                  setServiceType(event.target.value as ServiceType);
+                  setSearch({
+                    ...search,
+                    serviceType: event.target.value as ServiceType,
+                  });
                 }}>
                 <MenuItem value="全て">全て</MenuItem>
                 <MenuItem value="UberEats">UberEats</MenuItem>
@@ -143,7 +154,7 @@ export default function SaleCalculate() {
           </Grid>
           <Grid item xs={2}>
             <Grid container alignItems="center">
-              2
+              {search.orderNumber}
             </Grid>
           </Grid>
         </Grid>
@@ -161,7 +172,7 @@ export default function SaleCalculate() {
           </Grid>
           <Grid item xs={2}>
             <Grid container alignItems="center">
-              3845
+              {search.total}
             </Grid>
           </Grid>
           <Grid item xs>
@@ -185,16 +196,14 @@ export default function SaleCalculate() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell component="th" scope="row">
-                        {row.brandName}
-                      </TableCell>
-                      <TableCell>{row.serviceType}</TableCell>
-                      <TableCell>{row.orderNumber}</TableCell>
-                      <TableCell>{row.total}</TableCell>
-                    </TableRow>
-                  ))}
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      {summary.brandName}
+                    </TableCell>
+                    <TableCell>{summary.serviceType}</TableCell>
+                    <TableCell>{summary.orderNumber}</TableCell>
+                    <TableCell>{summary.total}</TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </TableContainer>
