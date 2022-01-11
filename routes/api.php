@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,6 +29,9 @@ Route::group([
     // 売上管理
     Route::get('/order_histories','OrderHistoryController@index');
     Route::get('/order_histories/{id}','OrderHistoryController@show');
+
+    // 売上集計
+    Route::get('/order_reports','OrderReportController@index');
 
     // 注文状況
     Route::get('/orders','OrderController@index');

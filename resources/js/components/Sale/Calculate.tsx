@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Button,
   Grid,
@@ -15,6 +15,12 @@ import {
   TextField,
 } from "@material-ui/core";
 import { ServiceType } from "../../api/orderHistory";
+import {
+  getOrderHistory,
+  OrderEachReport,
+  OrderReport,
+  OrderSummary,
+} from "../../api/orderReport";
 
 const formatDate = (date: Date | null): string => {
   if (date === null) {
@@ -32,47 +38,86 @@ const useStyles = makeStyles({
   },
 });
 
-const createData2 = (
-  id: number,
-  status: string,
-  orderedAt: string,
-  orderNumber: string,
-  total: number,
-  brandName: string
-) => {
-  return { id, status, orderedAt, orderNumber, total, brandName };
-};
-
-const rows2 = [
-  createData2(1, "完了", "01/06(木) 00:19", "2D04B", 2115, "オルバーガー京都"),
-];
-
 export default function SaleCalculate() {
   const [search, setSearch] = useState<{
-    startDate: Date | null;
+    startDate: Date;
     serviceType: ServiceType | "全て";
-    orderNumber: number | "-";
-    total: number | "-";
   }>({
     startDate: new Date(),
     serviceType: "全て",
-    orderNumber: "-",
-    total: "-",
   });
 
-  const [summary, setSummary] = useState<{
-    brandName: string;
-    serviceType: ServiceType | "全て";
-    orderNumber: number;
-    total: number;
-  }>({
-    brandName: "",
-    serviceType: "全て",
-    orderNumber: 0,
-    total: 0,
-  });
+  const [summary, setSummary] = useState<OrderSummary[]>([]);
+
+  const [orderEachReports, setOrderEachReports] = useState<OrderEachReport[]>(
+    []
+  );
+
+  const quantity: number | "-" = useMemo(() => {
+    const values = summary.map((value: OrderSummary) => {
+      return value.orderQuantity;
+    });
+    if (values.length === 0) {
+      return "-";
+    }
+    return values.reduce(
+      (previousValue: number, currentValue: number) =>
+        previousValue + currentValue
+    );
+  }, [summary]);
+
+  const total: number | "-" = useMemo(() => {
+    const values = summary.map((value: OrderSummary) => {
+      return value.total;
+    });
+    if (values.length === 0) {
+      return "-";
+    }
+    return values.reduce(
+      (previousValue: number, currentValue: number) =>
+        previousValue + currentValue
+    );
+  }, [summary]);
 
   const classes = useStyles();
+
+  const handlerChangeDateSearch = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setSearch({
+      ...search,
+      startDate: new Date(event.target.value),
+    });
+    getOrderHistory(event.target.value, search.serviceType).then(
+      (orderReport: OrderReport) => {
+        setSummary(orderReport.summary);
+        setOrderEachReports(orderReport.eachReport);
+      }
+    );
+  };
+
+  const handlerChangeServiceSearch = (
+    event: React.ChangeEvent<{
+      value: unknown;
+    }>
+  ) => {
+    const date =
+      search.startDate.getFullYear() +
+      "-" +
+      (search.startDate.getMonth() + 1) +
+      "-" +
+      search.startDate.getDate();
+
+    const serviceType = event.target.value as ServiceType;
+    setSearch({
+      ...search,
+      serviceType,
+    });
+    getOrderHistory(date, serviceType).then((orderReport: OrderReport) => {
+      setSummary(orderReport.summary);
+      setOrderEachReports(orderReport.eachReport);
+    });
+  };
 
   return (
     <Grid container spacing={2}>
@@ -91,12 +136,7 @@ export default function SaleCalculate() {
             <Grid container alignItems="center">
               <TextField
                 type="date"
-                onChange={(event) => {
-                  setSearch({
-                    ...search,
-                    startDate: new Date(event.target.value),
-                  });
-                }}
+                onChange={handlerChangeDateSearch}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -127,12 +167,7 @@ export default function SaleCalculate() {
               <Select
                 style={{ width: "155px" }}
                 value={search.serviceType}
-                onChange={(event) => {
-                  setSearch({
-                    ...search,
-                    serviceType: event.target.value as ServiceType,
-                  });
-                }}>
+                onChange={handlerChangeServiceSearch}>
                 <MenuItem value="全て">全て</MenuItem>
                 <MenuItem value="UberEats">UberEats</MenuItem>
                 <MenuItem value="Foodpanda">Foodpanda</MenuItem>
@@ -154,7 +189,7 @@ export default function SaleCalculate() {
           </Grid>
           <Grid item xs={2}>
             <Grid container alignItems="center">
-              {search.orderNumber}
+              {quantity}
             </Grid>
           </Grid>
         </Grid>
@@ -172,7 +207,7 @@ export default function SaleCalculate() {
           </Grid>
           <Grid item xs={2}>
             <Grid container alignItems="center">
-              {search.total}
+              {total}
             </Grid>
           </Grid>
           <Grid item xs>
@@ -182,68 +217,76 @@ export default function SaleCalculate() {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12} style={{ marginTop: "24px" }}>
-        <Grid container>
-          <Grid item xs={10}>
-            <TableContainer component={Paper}>
-              <Table className={classes.table} aria-label="simple table">
-                <TableHead style={{ backgroundColor: "#3f51b5" }}>
-                  <TableRow>
-                    <TableCell style={{ color: "white" }}>店舗名</TableCell>
-                    <TableCell style={{ color: "white" }}>サービス名</TableCell>
-                    <TableCell style={{ color: "white" }}>注文数</TableCell>
-                    <TableCell style={{ color: "white" }}>売上金額</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell component="th" scope="row">
-                      {summary.brandName}
-                    </TableCell>
-                    <TableCell>{summary.serviceType}</TableCell>
-                    <TableCell>{summary.orderNumber}</TableCell>
-                    <TableCell>{summary.total}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+      {summary.length !== 0 ? (
+        <Grid item xs={12} style={{ marginTop: "24px" }}>
+          <Grid container>
+            <Grid item xs={10}>
+              <TableContainer component={Paper}>
+                <Table className={classes.table} aria-label="simple table">
+                  <TableHead style={{ backgroundColor: "#3f51b5" }}>
+                    <TableRow>
+                      <TableCell style={{ color: "white" }}>店舗名</TableCell>
+                      <TableCell style={{ color: "white" }}>
+                        サービス名
+                      </TableCell>
+                      <TableCell style={{ color: "white" }}>注文数</TableCell>
+                      <TableCell style={{ color: "white" }}>売上金額</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {summary.map((row: OrderSummary) => (
+                      <TableRow key={row.brandName}>
+                        <TableCell component="th" scope="row">
+                          {row.brandName}
+                        </TableCell>
+                        <TableCell>{row.serviceType}</TableCell>
+                        <TableCell>{row.orderQuantity}</TableCell>
+                        <TableCell>{row.total}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-      <Grid item xs={12} style={{ marginTop: "24px" }}>
-        <TableContainer>
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>ステータス</TableCell>
-                <TableCell>注文日時</TableCell>
-                <TableCell>注文番号</TableCell>
-                <TableCell>金額</TableCell>
-                <TableCell>店舗名</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows2.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell component="th" scope="row">
-                    {row.status}
-                  </TableCell>
-                  <TableCell>{row.orderedAt}</TableCell>
-                  <TableCell>{row.orderNumber}</TableCell>
-                  <TableCell>{row.total}</TableCell>
-                  <TableCell>{row.brandName}</TableCell>
-                  <TableCell align="right">
-                    <Button variant="contained" color="primary">
-                      詳細確認
-                    </Button>
-                  </TableCell>
+      ) : null}
+      {orderEachReports.length !== 0 ? (
+        <Grid item xs={12} style={{ marginTop: "24px" }}>
+          <TableContainer>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>ステータス</TableCell>
+                  <TableCell>注文日時</TableCell>
+                  <TableCell>注文番号</TableCell>
+                  <TableCell>金額</TableCell>
+                  <TableCell>店舗名</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
+              </TableHead>
+              <TableBody>
+                {orderEachReports.map((row: OrderEachReport) => (
+                  <TableRow key={row.id}>
+                    <TableCell component="th" scope="row">
+                      {row.status}
+                    </TableCell>
+                    <TableCell>{row.orderedAt}</TableCell>
+                    <TableCell>{row.orderNumber}</TableCell>
+                    <TableCell>{row.total}</TableCell>
+                    <TableCell>{row.brandName}</TableCell>
+                    <TableCell align="right">
+                      <Button variant="contained" color="primary">
+                        詳細確認
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+      ) : null}
     </Grid>
   );
 }
