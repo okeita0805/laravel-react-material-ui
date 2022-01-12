@@ -14,13 +14,19 @@ import {
   TableRow,
   TextField,
 } from "@material-ui/core";
-import { ServiceType } from "../../api/orderHistory";
+import {
+  getInitialOrderHistoryDetail,
+  getOrderHistoryById,
+  OrderHistoryDetail,
+  ServiceType,
+} from "../../api/orderHistory";
 import {
   getOrderHistory,
   OrderEachReport,
   OrderReport,
   OrderSummary,
 } from "../../api/orderReport";
+import { OrderDetailDialog } from "./OrderDetailDialog";
 
 const formatDate = (date: Date | null): string => {
   if (date === null) {
@@ -52,6 +58,19 @@ export default function SaleCalculate() {
   const [orderEachReports, setOrderEachReports] = useState<OrderEachReport[]>(
     []
   );
+
+  const [open, setOpen] = React.useState(false);
+
+  const [orderHistory, setOrderHistory] = React.useState(
+    getInitialOrderHistoryDetail()
+  );
+
+  const handleClickOpen = (id: number) => {
+    getOrderHistoryById(id).then((orderHistoryDetail: OrderHistoryDetail) => {
+      setOrderHistory(orderHistoryDetail);
+      setOpen(true);
+    });
+  };
 
   const quantity: number | "-" = useMemo(() => {
     const values = summary.map((value: OrderSummary) => {
@@ -276,7 +295,10 @@ export default function SaleCalculate() {
                     <TableCell>{row.total}</TableCell>
                     <TableCell>{row.brandName}</TableCell>
                     <TableCell align="right">
-                      <Button variant="contained" color="primary">
+                      <Button
+                        onClick={() => handleClickOpen(row.id)}
+                        variant="contained"
+                        color="primary">
                         詳細確認
                       </Button>
                     </TableCell>
@@ -287,6 +309,11 @@ export default function SaleCalculate() {
           </TableContainer>
         </Grid>
       ) : null}
+      <OrderDetailDialog
+        orderHistory={orderHistory}
+        setOpen={setOpen}
+        open={open}
+      />
     </Grid>
   );
 }

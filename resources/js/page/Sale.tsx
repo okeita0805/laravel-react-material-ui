@@ -45,8 +45,7 @@ export default function Top() {
         </Button>
       </Grid>
       <Grid item xs={12}>
-        <SaleCalculate />
-        {/* {isHistory ? <SaleHistoryTable /> : <SaleCalculate />} */}
+        {isHistory ? <SaleHistoryTable /> : <SaleCalculate />}
       </Grid>
     </Grid>
   );
