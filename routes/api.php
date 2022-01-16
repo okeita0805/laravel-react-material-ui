@@ -35,6 +35,7 @@ Route::group([
 
     // 注文状況
     Route::get('/orders','OrderController@index');
+    Route::put('/orders/{id}','OrderController@update');
     Route::get('/orders/order_stops','OrderController@getOrderStops');
 
 });
