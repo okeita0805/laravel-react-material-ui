@@ -12,6 +12,8 @@ export type Order = {
 
 export type Orders = Order[];
 
+export type Status = "新規注文" | "調理中" | "準備完了";
+
 export async function getOrders(): Promise<Orders> {
   try {
     const response = await axios.get<{
@@ -22,6 +24,21 @@ export async function getOrders(): Promise<Orders> {
     console.error(e);
   }
   return [];
+}
+
+export async function updateOrder(
+  order: Order,
+  status: Status
+): Promise<Order> {
+  try {
+    const response = await axios.put<{
+      order: Order;
+    }>(`api/orders/${order.id}`, { status });
+    return response.data.order;
+  } catch (e) {
+    console.error(e);
+  }
+  return order;
 }
 
 export async function getOrderStops(): Promise<{ isOrderStops: boolean }> {

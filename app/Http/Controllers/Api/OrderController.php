@@ -6,6 +6,7 @@ use App\Eloquent\Brand;
 use App\Eloquent\Order;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -39,6 +40,33 @@ class OrderController extends Controller
             ],
             200
         );
+    }
+
+    /**
+     * 注文のステータスを更新
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $status = $request->get('status', null);
+        if (is_null($status)) {
+            return response()->json([], 400);
+        }
+
+        $shop_id = Auth::user()->shop_id;
+        $order = Order::query()->where('shop_id', $shop_id)->where('id', $id)->first();
+        if (is_null($order)) {
+            return response()->json([], 404);
+        }
+
+        $order->status = $status;
+        $order->save();
+
+        return response()->json([
+            'order' => $order->toArray()
+        ], 200);
     }
 
     /**

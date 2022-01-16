@@ -4,7 +4,14 @@ import { Grid, Paper, styled } from "@material-ui/core";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import CakeIcon from "@material-ui/icons/Cake";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
-import { getOrders, getOrderStops, Order, Orders } from "../api/order";
+import {
+  getOrders,
+  getOrderStops,
+  Order,
+  Orders,
+  Status,
+  updateOrder,
+} from "../api/order";
 import { Alert } from "@material-ui/lab";
 import { Link } from "react-router-dom";
 
@@ -85,8 +92,6 @@ const PreparedOrder = (): JSX.Element => (
 );
 
 export default function Top() {
-  type Status = "新規注文" | "調理中" | "準備完了";
-
   const [status, setStatus] = useState<Status>("新規注文");
 
   const [orders, setOrders] = React.useState<Orders>([]);
@@ -120,12 +125,47 @@ export default function Top() {
   const PreparedOrders = (): Orders =>
     orders.filter((order: Order) => order.status === "準備完了");
 
+  const getNextStatus = (status: Status): Status => {
+    if (status === "新規注文") {
+      return "調理中";
+    }
+
+    if (status === "調理中") {
+      return "準備完了";
+    }
+
+    if (status === "準備完了") {
+      return status;
+    }
+
+    console.error("予期せぬステータス");
+    return status;
+  };
+
+  const handlerClick = (order: Order) => {
+    if (order.status === "準備完了") {
+      return;
+    }
+
+    updateOrder(order, getNextStatus(order.status as Status)).then(
+      (order: Order) => {
+        const filteredOrders = orders.filter(
+          (filteredOrder: Order) => filteredOrder.id !== order.id
+        );
+        setOrders([...filteredOrders, order]);
+      }
+    );
+  };
+
   const OrderList = (orders: Orders) => {
     return (
       <>
         {orders.map((order: Order) => {
           return (
-            <ItemOrder key={order.id}>
+            <ItemOrder
+              key={order.id}
+              style={{ cursor: "pointer" }}
+              onClick={() => handlerClick(order)}>
               <Grid container>
                 <Grid item xs>
                   {order.serviceType}
@@ -202,29 +242,29 @@ export default function Top() {
           <Grid item xs={2}>
             {status === "新規注文" ? (
               <LeftPrimaryButton onClick={() => handlerStatus("新規注文")}>
-                {NewOrder()}
+                <NewOrder />
               </LeftPrimaryButton>
             ) : (
               <LeftButton onClick={() => handlerStatus("新規注文")}>
-                {NewOrder()}
+                <NewOrder />
               </LeftButton>
             )}
             {status === "調理中" ? (
               <LeftPrimaryButton onClick={() => handlerStatus("調理中")}>
-                {CookingOrder()}
+                <CookingOrder />
               </LeftPrimaryButton>
             ) : (
               <LeftButton onClick={() => handlerStatus("調理中")}>
-                {CookingOrder()}
+                <CookingOrder />
               </LeftButton>
             )}
             {status === "準備完了" ? (
               <LeftPrimaryButton onClick={() => handlerStatus("準備完了")}>
-                {PreparedOrder()}
+                <PreparedOrder />
               </LeftPrimaryButton>
             ) : (
               <LeftButton onClick={() => handlerStatus("準備完了")}>
-                {PreparedOrder()}
+                <PreparedOrder />
               </LeftButton>
             )}
           </Grid>
