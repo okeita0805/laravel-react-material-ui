@@ -19,7 +19,6 @@ import AssessmentIcon from "@material-ui/icons/Assessment";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
 import Brightness2Icon from "@material-ui/icons/Brightness2";
 import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
-import InfoIcon from "@material-ui/icons/Info";
 import SettingsIcon from "@material-ui/icons/Settings";
 import RestaurantIcon from "@material-ui/icons/Restaurant";
 import { Link } from "react-router-dom";

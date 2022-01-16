@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Eloquent\Brand;
 use App\Eloquent\Order;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -38,5 +39,37 @@ class OrderController extends Controller
             ],
             200
         );
+    }
+
+    /**
+     * 注文受付停止のブランド返却
+     * @return JsonResponse
+     */
+    public function getOrderStops(): JsonResponse
+    {
+        $shop_id = Auth::user()->shop_id;
+        $brands = Brand::query()->where('shop_id', $shop_id)->orWhere('is_uber_eats_order_accepted', false)
+            ->orWhere('is_foodpanda_order_accepted', false)
+            ->orWhere('is_didi_order_accepted', false)->get();
+
+        $is_order_stops = $brands->filter(function (Brand $brand) {
+            // UberEatsを有効化、かつ注文受付を停止している場合
+            if ($brand->is_uber_eats_usage && !$brand->is_uber_eats_order_accepted) {
+                return true;
+            }
+
+            // Foodpandaを有効化、かつ注文受付を停止している状態
+            if ($brand->is_foodpanda_usage && !$brand->is_foodpanda_order_accepted) {
+                return true;
+            }
+
+            // Didiを有効化、かつ注文受付を停止している状態
+            if ($brand->is_didi_usage && !$brand->is_didi_order_accepted) {
+                return true;
+            }
+            return false;
+        });
+
+        return response()->json(['isOrderStops' => $is_order_stops->isNotEmpty()], 200);
     }
 }
