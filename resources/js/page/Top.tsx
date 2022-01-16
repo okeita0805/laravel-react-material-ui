@@ -4,7 +4,9 @@ import { Grid, Paper, styled } from "@material-ui/core";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import CakeIcon from "@material-ui/icons/Cake";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
-import { getOrders, Order, Orders } from "../api/order";
+import { getOrders, getOrderStops, Order, Orders } from "../api/order";
+import { Alert } from "@material-ui/lab";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -89,6 +91,8 @@ export default function Top() {
 
   const [orders, setOrders] = React.useState<Orders>([]);
 
+  const [isOrderStops, setIsOrderStops] = React.useState<boolean>(false);
+
   useEffect(() => {
     // ポーリング処理
     const timer = setInterval(() => {
@@ -100,6 +104,12 @@ export default function Top() {
       clearInterval(timer);
     };
   }, []);
+
+  useEffect(() => {
+    getOrderStops().then((res) => {
+      setIsOrderStops(res.isOrderStops);
+    });
+  }, [setIsOrderStops]);
 
   const NewOrders = (): Orders =>
     orders.filter((order: Order) => order.status === "新規注文");
@@ -147,6 +157,21 @@ export default function Top() {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
+        {isOrderStops && (
+          <Grid container>
+            <Grid item xs={2} />
+            <Grid item xs={10}>
+              <Grid container>
+                <Alert severity="error" style={{ width: "100%" }}>
+                  現在、注文受付停止中のブランドがあります&nbsp;-&nbsp;
+                  <Link to={"/order_stop"}>
+                    <strong>確認</strong>
+                  </Link>
+                </Alert>
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
         <Grid container>
           <Grid item xs={2} />
           <Grid item xs={10}>

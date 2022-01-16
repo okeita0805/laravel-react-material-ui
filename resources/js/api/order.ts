@@ -23,3 +23,17 @@ export async function getOrders(): Promise<Orders> {
   }
   return [];
 }
+
+export async function getOrderStops(): Promise<{ isOrderStops: boolean }> {
+  try {
+    const response = await axios.get<{
+      isOrderStops: boolean;
+    }>("api/orders/order_stops");
+    return response.data;
+  } catch (e) {
+    console.error(e);
+  }
+  return {
+    isOrderStops: false,
+  };
+}
